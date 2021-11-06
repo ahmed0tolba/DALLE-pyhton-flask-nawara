@@ -56,7 +56,7 @@ except sqlite3.OperationalError as err:
   print('Database does not exist')
   print(err)
 
-# conn.close()
+conn.close()
 
 def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
   
@@ -73,11 +73,14 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
     data_tuple = (searchtext+"_"+str(x),)
     curt.execute(sqlite_insert_query,data_tuple)
     connt.commit()
+  connt.close()
   try:
     getSaveImagesRepresentingTask(searchtext,numofimages,tokenizer,model,clip,processor)
   except:
     sql_update_query = """Update searchestextstable set states = 0,startdate = ? where searchsentense = ?"""
     data_tuple = (datetime.datetime.now(),searchtext)
+    connt = sqlite3.connect(databasename, uri=True)
+    curt = connt.cursor()  
     curt.execute(sql_update_query,data_tuple)
     connt.commit()
     for x in range(int(numofimages)):
@@ -118,13 +121,15 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
         data_tuple = (searchsentense+"_"+str(x),)
         curt.execute(sqlite_insert_query,data_tuple)
         connt.commit()
-      
+      connt.close()
       print("'"+searchsentense+"'"+ " was in queu , and now is running")
       try:
         getSaveImagesRepresentingTask(searchsentense,numofimages,tokenizer,model,clip,processor)
       except:
         sql_update_query = """Update searchestextstable set states = 0,startdate = ? where searchsentense = ?"""
         data_tuple = (datetime.datetime.now(),searchsentense)
+        connt = sqlite3.connect(databasename, uri=True)
+        curt = connt.cursor()  
         curt.execute(sql_update_query,data_tuple)
         connt.commit()
         for x in range(int(numofimages)):
@@ -132,7 +137,7 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
           data_tuple = (searchsentense+"_"+str(x),)
           curt.execute(sqlite_insert_query,data_tuple)
           connt.commit()
-
+        
       sql_update_query = """Update searchestextstable set states = 2,finishdate = ? where searchsentense = ?"""
       data_tuple = (datetime.datetime.now(),searchsentense)
       curt.execute(sql_update_query,data_tuple)
@@ -191,17 +196,19 @@ if numberofrunningtasks < numberofrunningtasksmax:
     data_tuple = (datetime.datetime.now(),searchsentense)
     curt.execute(sql_update_query,data_tuple)
     connt.commit()
+    connt.close()
     print("'"+searchsentense+"'"+ " was in queu , and now is running")
     t0 = Thread(target=vizthread,args=[searchsentense,numofimages,tokenizer,model,clip,processor])
     t0.start()
-
+    connt = sqlite3.connect(databasename, uri=True)
+    curt = connt.cursor()  
     curt.execute('select * from '+ searchestextstable +' where states = ?', (1,))
     records2 = curt.fetchall()
     numberofrunningtasks = len(records2)
     if numberofrunningtasks >= numberofrunningtasksmax:
       break
 
-
+connt.close()  
 
 
 @application.route('/')
@@ -236,6 +243,7 @@ def index():
     data_tuple = (lastsearch,)
     # print(sqlite_insert_query)
     cur.execute(sqlite_insert_query,data_tuple)
+    conn.close()
     rows = cur.fetchall()
     for row in rows:
       searchsentense = row[1]
@@ -284,9 +292,7 @@ def mylink():
   hiddenmessage = -1
   alreadystored = 0
   form_name = request.form['form-name']
-  conn = sqlite3.connect(databasename, uri=True)
-  cur = conn.cursor()
-
+  
   if form_name == 'formrequest':
     textsearsh = format(request.form['textsearsh']).replace("\n"," ").replace("  "," ").strip()
     res = make_response(render_template('index.html')) 
@@ -304,7 +310,10 @@ def mylink():
                             where searchsentense = ?;"""
     data_tuple = (textsearsh,)
     # print(sqlite_insert_query)
+    conn = sqlite3.connect(databasename, uri=True)
+    cur = conn.cursor()
     cur.execute(sqlite_insert_query,data_tuple)
+    conn.close()
     rows = cur.fetchall()
     searchedtextindatabase = len(rows)
     alreadyindatabase = False
@@ -332,9 +341,13 @@ def mylink():
                             VALUES 
                           (?,?,?,?);"""
       data_tuple = (textsearsh, numofimages, 0,datetime.datetime.now())
+      conn = sqlite3.connect(databasename, uri=True)
+      cur = conn.cursor()
       cur.execute(sqlite_insert_query,data_tuple)
       conn.commit()
 
+      conn = sqlite3.connect(databasename, uri=True)
+      cur = conn.cursor()        
       for x in range(int(numofimages)):
         sqlite_insert_query = """INSERT INTO resultImagestable
                             (searchsentense ,imgname , states) 
@@ -343,9 +356,9 @@ def mylink():
         data_tuple = (textsearsh,textsearsh+"_"+str(x), 0)
         cur.execute(sqlite_insert_query,data_tuple)
         conn.commit()
-
-
-
+      
+      conn.close()
+      
       message = "'"+textsearsh+"'"+ " --> is queued for processing and will be processed soon, results will be updated automatically , you can close the page and come back later" 
       print(message)
 
@@ -354,8 +367,11 @@ def mylink():
     #   
     #   
       
-    
+    conn = sqlite3.connect(databasename, uri=True)
+    cur = conn.cursor()
+        
     cur.execute('select * from '+ searchestextstable +' where states = ?', (1,))
+    conn.close()
     records = cur.fetchall()
     numberofrunningtasks = len(records)
     print("numberofrunningtasks = ", numberofrunningtasks)
@@ -375,7 +391,11 @@ def mylink():
                             where searchsentense = ?;"""
     data_tuple = (textsearsh,)
     # print(sqlite_insert_query)
+    conn = sqlite3.connect(databasename, uri=True)
+    cur = conn.cursor()
+        
     cur.execute(sqlite_insert_query,data_tuple)
+    conn.close()
     rows = cur.fetchall()
     for row in rows:
       resultsevaluation = row[4]
@@ -394,7 +414,10 @@ def mylink():
                             where searchsentense = ?;"""
     data_tuple = (nam,)
     # print(sqlite_insert_query)
+    conn = sqlite3.connect(databasename, uri=True)
+    cur = conn.cursor()
     cur.execute(sqlite_insert_query,data_tuple)
+    conn.close()
     rows = cur.fetchall()
     for row in rows:
       resultsevaluation = row[4]
@@ -407,16 +430,18 @@ def mylink():
         print(x,nam)
         print("statesnum = " + str (statesnum))
         data_tuple = (statesnum,nam)
+        conn = sqlite3.connect(databasename, uri=True)
+        cur = conn.cursor()
         cur.execute(sql_update_query,data_tuple)
         conn.commit()
-
+        
         if int(x) >= 0:
           goodImage = x
           sql_update_query = """Update resultImagestable set evaluation = ? where imgname = ?"""
           data_tuple = (1,nam+"_"+str(x))
           cur.execute(sql_update_query,data_tuple)
           conn.commit()
-
+        
         message = "Thanks You, Your feedback is stored successfully, you may view it any time by entering the same text. You can close the page or start a new search."
         print (message)
         alreadystored = 1
@@ -432,7 +457,7 @@ def mylink():
         alreadystored = 1
 
     
-  # conn.close()
+  conn.close()
   # print (message,2)
   result=1
   # result=textsearsh+"_1.png"
