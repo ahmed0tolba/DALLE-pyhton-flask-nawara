@@ -1,0 +1,357 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title>Nowara AI</title>
+    <meta charset=utf-8>
+    <link rel="stylesheet" href="static/_styles.css">
+    <link rel="shortcut icon" href="/static/_icon.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <script>
+        let selectedimageNum = -1;
+        canChooseImage = true // unless server has a previously stored results
+        function imageClicked(clicked_img_id) {
+            if (canChooseImage) {
+                var slides = document.getElementsByClassName('tickImg');
+                for (var i = 0; i < slides.length; i++) {
+                    slides[i].style.opacity = '0.00';
+                }
+                document.getElementById(clicked_img_id).style.opacity = '1';
+                selectedimageNum = parseInt(clicked_img_id.slice(-1))
+                document.getElementById('selectedimageNum').value = selectedimageNum;
+                document.getElementById("submit2").disabled = false;
+                document.getElementById("noimageisgood").checked = false;
+            }
+
+        }
+
+        function imageWasSelectedPreviously(clicked_img_num) {
+            img_num = parseInt(clicked_img_num)
+                // console.log(img_num)
+            if (img_num != -1) {
+                canChooseImage = false
+                var slides = document.getElementsByClassName('tickImg');
+                for (var i = 0; i < slides.length; i++) {
+                    if (i != clicked_img_num)
+                        slides[i].style.opacity = '0.00';
+                    else
+                        slides[i].style.opacity = '1.00';
+                }
+                document.getElementById("submit2").disabled = true;
+            } else if (img_num >= 0) {
+                document.getElementById(clicked_img_id).style.opacity = '1';
+                selectedimageNum = parseInt(clicked_img_id.slice(-1))
+                document.getElementById('selectedimageNum').value = selectedimageNum;
+                document.getElementById("noimageisgood").checked = false;
+            } else if (img_num == -2) {
+                document.getElementById("noimageisgood").checked = true
+            }
+        }
+
+
+        function imagesIrrelevantClickedText() {
+            if (canChooseImage & showingTrueImages) {
+                if (!document.getElementById("noimageisgood").checked) {
+                    var slides = document.getElementsByClassName('tickImg');
+                    for (var i = 0; i < slides.length; i++) {
+                        slides[i].style.opacity = '0.00';
+                    }
+                    selectedimageNum = -2;
+                    document.getElementById("noimageisgood").checked = true;
+                    document.getElementById('selectedimageNum').value = selectedimageNum;
+                    document.getElementById("submit2").disabled = false;
+                } else {
+                    selectedimageNum = -1;
+                    document.getElementById("noimageisgood").checked = false;
+                    document.getElementById('selectedimageNum').value = selectedimageNum;
+                    document.getElementById("submit2").disabled = true;
+                }
+            }
+        }
+
+        function imagesIrrelevantClicked() {
+            if (canChooseImage & showingTrueImages) {
+                if (document.getElementById("noimageisgood").checked) {
+                    var slides = document.getElementsByClassName('tickImg');
+                    for (var i = 0; i < slides.length; i++) {
+                        slides[i].style.opacity = '0.00';
+                    }
+                    selectedimageNum = -2;
+                    document.getElementById('selectedimageNum').value = selectedimageNum;
+                    document.getElementById("submit2").disabled = false;
+                } else {
+                    selectedimageNum = -1;
+                    document.getElementById('selectedimageNum').value = selectedimageNum;
+                    document.getElementById("submit2").disabled = true;
+                }
+            } else {
+                document.getElementById("noimageisgood").checked = !document.getElementById("noimageisgood").checked
+            }
+        }
+
+        var today = new Date();
+        var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+        function setCookie(lastsearch, value) {
+            document.cookie = lastsearch + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+        }
+
+        function putCookie(textsearsh, numberofimages)
+        //this should set the UserName cookie to the proper value;
+        {
+            // console.log("hi");
+            setCookie("lastsearch", decodeURI(textsearsh.value));
+            setCookie("numberofimages", numberofimages);
+            // console.log(textsearsh[0].value);
+            return true;
+        }
+
+
+        // CHECK IF IMAGE EXISTS
+        function checkIfImageExists(url) {
+            const img = new Image();
+            img.src = url;
+
+            if (img.complete) {
+                return (true);
+            } else {
+                img.onload = () => {
+                    return (true);
+                };
+
+                img.onerror = () => {
+                    return (false);
+                };
+            }
+        }
+
+        function imageExists(image_url) {
+
+            var http = new XMLHttpRequest();
+
+            http.open('HEAD', image_url, false);
+            http.send();
+
+            return http.status != 404;
+
+        }
+
+        // displayImagesIfReadyisRunning = false;
+
+        function precesstxt()
+        //this should set the UserName cookie to the proper value;
+        {
+            checkNumImagesBounderies();
+            searchtxt = document.getElementById('textsearsh');
+            // console.log(searchtxt)
+            numberofimages = document.getElementById('numberofimages').value;
+
+            if (searchtxt.length < 1 || numberofimages < 1 || numberofimages > 10) {
+                // console.log("invalid input");
+                return;
+            }
+
+            putCookie(searchtxt, numberofimages);
+
+            tt = "";
+            // console.log(numberofimages)
+            for (let i = 0; i < numberofimages; i++) {
+                tt += "<div class='divImg' id='divImg_" + i + "'><img src='static/_tick.png' class='tickImg' onclick='imageClicked(this.id)' id='tickImg_" + i + "'></div>";
+            }
+            document.getElementById("divImages").innerHTML = tt;
+
+            displayImagesIfReady(searchtxt.value, numberofimages);
+
+            return true;
+        }
+
+        function checkNumImagesBounderies() {
+            if (document.getElementById('numberofimages').value > 10)
+                document.getElementById('numberofimages').value = 10
+            if (document.getElementById('numberofimages').value < 1)
+                document.getElementById('numberofimages').value = 1
+
+        }
+
+        $(document).ready(function() {
+            var wordCounts = {};
+            $("#textsearsh").keyup(function() {
+                var matches = this.value.match(/\b/g);
+                wordCounts[this.id] = matches ? matches.length / 2 : 0;
+                var finalCount = 0;
+                $.each(wordCounts, function(k, v) {
+                    finalCount += v;
+                });
+                $('#display_count').html(finalCount);
+                am_cal(finalCount);
+            }).keyup();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="divmenu">
+        <button class="menubutton" onclick="location.href=''">Home</button>
+        <button class="menubutton" onclick="location.href='results'">Results</button>
+    </div>
+
+    <div style="padding-left:5%;padding-right:5%;">
+        <br>
+        <form action="/" method="post" style="font-size: 1.3em;color: rgb(12, 23, 60);">
+            <input type="hidden" name="form-name" value="formrequest"> Enter a phase to turn into images:
+            <br>
+            <textarea id="textsearsh" name="textsearsh" style="width: 94%;border: 2px solid #0a1659;padding: 1%;margin: 2%;margin-bottom: 0%;" placeholder="Enter your text with no more than 70 words.."></textarea> <span style="font-size: .7em;float:right">Total word Count : <span id="display_count">0</span>            words.</span>
+            <br>
+            <!-- <br>
+        <br>
+        Enter the number of Images you want:
+        <br> -->
+            <input id="numberofimages" name="numberofimages" type="number" min="8" max="8" value="8" style="visibility:hidden;" onchange="checkNumImagesBounderies();" />
+            <!-- <br> -->
+
+            <input type="submit" id="submit" class="buttonsubmit raise" value="Generate Image(s)" style="min-width: 200px;min-height: 50px;font-size: .8em;font-weight: bold;border: 2px solid #0a1659;" onclick="precesstxt();" />
+            <br><br> AI response:
+            <br>
+            <div id="message" name="message" class="messagediv">
+                {{ message }}
+            </div>
+
+            <div id="hiddenmessage" name="hiddenmessage" class="hiddenmessage" style="visibility: hidden;width: 100%;background-color: azure;">{{ hiddenmessage }}</div>
+
+            <div id="hiddenmessageAlreadyStored" name="hiddenmessageAlreadyStored" class="hiddenmessageAlreadyStored" style="visibility: hidden;width: 100%;background-color: azure;">{{ alreadystored }}</div>
+
+
+            </textarea>
+        </form>
+        <!-- </form> -->
+
+        <!-- <button> <a href="/my-link/">Click me</a></button> -->
+
+        <!-- <img src="{{url_for('static', filename='+{{ result }}+')}}" width=100%, alt="asd"> -->
+
+        <!-- <script> console.log('{{result}}') </script> -->
+
+        <form action="/" method="post">
+            <input type="hidden" name="form-name" value="formfeedback">
+            <input type="hidden" name="selectedimageNum" id="selectedimageNum" value="-1">
+            <input type="hidden" name="shownimagesName" id="shownimagesName" value="">
+            <div id="divImages">
+
+
+            </div>
+            <div style="text-align: center;">
+                <input type="checkbox" id="noimageisgood" value="noimageisgood" onclick="imagesIrrelevantClicked()" style="min-height: 20px;min-width: 20px;cursor:pointer;"><label for="vehicle1" onclick="imagesIrrelevantClickedText()" style="cursor:pointer;"> All images are irrelevant.</label>
+                <br><br>
+                <input type="submit" id="submit2" value="Submit feedback" disabled style="min-width: 200px;min-height: 50px;" />
+            </div>
+        </form>
+        <!-- <img id="ResultImageId1" src=""> -->
+    </div>
+</body>
+
+<script>
+    // const textarea = document.getElementById("message");
+    // document.getElementById("message").innerHTML = "Write the text in the text input area. Click Generate Images. Wait for images to show up. Please rate each image.";
+    // textarea.addEventListener("input", function (e) {
+    //     this.style.height = "auto";
+    //     this.style.height = this.scrollHeight + "px";
+    // });
+
+    function checkImage(imageSrc) {
+        var img = new Image();
+        if (img.onload) return true;
+        if (img.onerror) return false;
+        img.src = imageSrc;
+    }
+
+    function wait(ms) {
+        var start = new Date().getTime();
+        var end = start;
+        while (end < start + ms) {
+            end = new Date().getTime();
+        }
+    }
+
+
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+
+    // function GetCookies() {
+    document.getElementById('textsearsh').value = decodeURI(getCookie('lastsearch'));
+    // document.getElementById('numberofimages').value = getCookie('numberofimages');
+
+    checkNumImagesBounderies();
+
+    precesstxt();
+
+    // displayImagesIfReady("boat sea", 2)
+    showingTrueImages = false;
+
+    function displayImagesIfReady(searchtxt, numberofimages) {
+        const currentDiv = document.getElementById("divImages");
+        showingTrueImages = false;
+        var divImg = document.getElementsByClassName("divImg");
+        var tickImg = document.getElementsByClassName("tickImg");
+        curimg = [];
+        shouldrun = false;
+        for (let i = 0; i < numberofimages; i++) {
+            curimg[i] = 'static/' + searchtxt + '_' + i + '.png';
+            // console.log(curimg);
+            // var divImg[];
+
+            fetch(curimg[i], {
+                    method: 'HEAD'
+                })
+                .then(res => {
+                    // console.log(curimg[i]);
+                    if (res.ok) {
+                        // console.log('Image exists.');
+                        showingTrueImages = true;
+                        divImg[i].style.backgroundImage = "url(" + "'" + curimg[i] + "'" + ")";
+                        tickImg[i].style.display = "inline-block"
+                        if (document.getElementById("hiddenmessageAlreadyStored").innerHTML == "0")
+                            document.getElementById("message").innerHTML = "Results are ready, please Select the best fit.";
+
+                        document.getElementById("shownimagesName").value = searchtxt;
+                    } else {
+                        if (document.getElementById("hiddenmessage").innerHTML != "-1") {
+                            divImg[i].style.backgroundImage = "url('static/_processing.gif')";
+                            // divImg[i].style.width = 100 / numberofimages + "%";
+                            tickImg[i].style.display = "none"
+                            if (!shouldrun) {
+                                shouldrun = true;
+                                console.log("reload imgs after 120 sec")
+                                setTimeout(function() {
+                                    displayImagesIfReady(searchtxt, numberofimages);
+                                }, 120000);
+                            }
+                        }
+                        // console.log('Image does not exist.');
+                    }
+                }).catch(
+                    err => {});
+        }
+        // console.log("hi")
+
+
+    }
+
+    imageWasSelectedPreviously('{{ goodImage }}')
+        // }
+</script>
+
+</html>
+
+<!-- <img src="{{url_for('static', filename='''+{{ result }}+''')}}" width=100%, alt=""> -->

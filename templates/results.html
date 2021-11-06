@@ -1,0 +1,42 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title>Nowara AI - Results</title>
+    <meta charset=utf-8>
+    <link rel="stylesheet" href="../static/_styles.css">
+    <link rel="shortcut icon" href="/static/_icon.png" />
+</head>
+
+<body>
+    <div class="divmenu">
+        <button class="menubutton" onclick="location.href='/'">Home</button>
+        <button class="menubutton" onclick="location.href='../results'">Results</button>
+        <button class="menubutton" onclick="location.href='../download'">Download</button>
+    </div>
+
+    <div style="text-align: center;display: block;">
+        <table style="border: 2px solid #15245e; margin-top:1em ;margin-left:auto;margin-right:auto;border-collapse: collapse;">
+            {% for item in data %}
+            <tr style="border-bottom: .2em solid black;">
+                <td style="border-right: .1em solid black;">&nbsp;&nbsp;{{item[0]}}&nbsp;&nbsp;</td>
+                <td style="border-right: .1em solid black;">&nbsp;&nbsp;{{item[1]}}&nbsp;&nbsp;</td>
+                {% if item[4]>-1 %}
+                <td style="margin: 0%;padding: 0%;"><img src="../static/{{item[1]}}_{{item[4]}}.png"> </td>
+                {% endif %} {% if item[4]==-2 %}
+                <td style="margin: 0%;padding: 0%;"><img width=100 src="../static/_bad.png"> </td>
+                {% endif %}{% if item[3]==1 and item[4]==-1 %}
+                <td><img src="../static/_processing.gif"> </td>
+                {% endif %} {% if item[3]!=1 and item[4]==-1 %}
+                <td><img src="../static/_notrated.png"> </td>
+                {% endif %}
+                <!-- <td>{{item[3]}}</td>
+                <td>{{item[4]}}</td> -->
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+</html>
