@@ -488,7 +488,7 @@ def downloadFile ():
     # super(MyFlaskApp, self).run(host=host, port=port, debug=debug, load_dotenv=load_dotenv, **options)
 
 if __name__ == '__main__':
-  application.run(debug=True,host="0.0.0.0",use_reloader=True)
+  application.run(debug=True,host="0.0.0.0",use_reloader=False)
     
 
 
