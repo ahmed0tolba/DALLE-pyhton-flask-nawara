@@ -316,7 +316,7 @@ scikit-image==0.16.2
 scikit-learn==0.22.2.post1
 scipy==1.4.1
 #screen-resolution-extra # ==0.0.0
-#scs==2.1.4
+scs==2.1.4
 seaborn==0.11.2
 semver==2.13.0
 Send2Trash==1.8.0
@@ -339,7 +339,7 @@ sqlparse==0.4.2
 srsly==1.0.5
 statsmodels==0.10.2
 sympy==1.7.1
-tables==3.4.4
+#tables==3.4.4
 tabulate==0.8.9
 tblib==1.7.0
 tensorboard==2.6.0
