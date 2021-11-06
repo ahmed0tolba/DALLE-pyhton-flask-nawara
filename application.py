@@ -243,8 +243,8 @@ def index():
     data_tuple = (lastsearch,)
     # print(sqlite_insert_query)
     cur.execute(sqlite_insert_query,data_tuple)
-    conn.close()
     rows = cur.fetchall()
+    conn.close()
     for row in rows:
       searchsentense = row[1]
       numofimages = row[2]
@@ -313,8 +313,8 @@ def mylink():
     conn = sqlite3.connect(databasename, uri=True)
     cur = conn.cursor()
     cur.execute(sqlite_insert_query,data_tuple)
-    conn.close()
     rows = cur.fetchall()
+    conn.close()
     searchedtextindatabase = len(rows)
     alreadyindatabase = False
     if searchedtextindatabase > 0:
@@ -371,8 +371,8 @@ def mylink():
     cur = conn.cursor()
         
     cur.execute('select * from '+ searchestextstable +' where states = ?', (1,))
-    conn.close()
     records = cur.fetchall()
+    conn.close()
     numberofrunningtasks = len(records)
     print("numberofrunningtasks = ", numberofrunningtasks)
     if not alreadyindatabase:
@@ -395,8 +395,8 @@ def mylink():
     cur = conn.cursor()
         
     cur.execute(sqlite_insert_query,data_tuple)
-    conn.close()
     rows = cur.fetchall()
+    conn.close()
     for row in rows:
       resultsevaluation = row[4]
       if resultsevaluation == -1: # no evaluation was entered , take the evaluation
@@ -417,8 +417,8 @@ def mylink():
     conn = sqlite3.connect(databasename, uri=True)
     cur = conn.cursor()
     cur.execute(sqlite_insert_query,data_tuple)
-    conn.close()
     rows = cur.fetchall()
+    conn.close()
     for row in rows:
       resultsevaluation = row[4]
       if resultsevaluation == -1: # no evaluation was entered , take the evaluation
