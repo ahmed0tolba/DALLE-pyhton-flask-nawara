@@ -149,18 +149,18 @@ def getSaveImagesRepresentingTask(prompt,n_predictions,tokenizer,model,clip,proc
     logits = clip(**inputs).logits_per_image
     scores = jax.nn.softmax(logits, axis=0).squeeze()  # normalize and sum all scores to 1
 
-
+    print("hi4")
 
     from IPython.display import display
     # rank images by score
     print(f'Prompt: {prompt}\n')
     for idx in scores.argsort()[::-1]:
         print(f'Score: {scores[idx]}')
-        display(images[idx])
         images[idx].save("static/"+prompt+"_"+str(idx) +".png","PNG")
-
+        display(images[idx])
+        
         # print()
-
+    print("hi5 images saved theoratically")
     # del DALLE_REPO , DALLE_COMMIT_ID , tokenizer, model
     # gc.collect()
     return
