@@ -39,6 +39,7 @@ def getSaveImagesRepresentingTask(prompt,n_predictions,tokenizer,model,clip,proc
     # !pip install -q git+https://github.com/patil-suraj/vqgan-jax.git  # VQGAN model in JAX # (remove q) (never mind)
     # !pip install -q git+https://github.com/borisdayma/dalle-mini.git  # Model files # (remove q) (never mind)
     # pip install Pillow
+    # pip install ipywidgets # AttributeError: 'tqdm_notebook' object has no attribute 'disp'
     """## Generate encoded images
 
     We generate prediction samples from a text prompt using `flax-community/dalle-mini` model.
@@ -107,24 +108,24 @@ def getSaveImagesRepresentingTask(prompt,n_predictions,tokenizer,model,clip,proc
     from vqgan_jax.modeling_flax_vqgan import VQModel
     import numpy as np
     from PIL import Image
-
+    print("hi2")
     # make sure we use compatible versions
     VQGAN_REPO = 'flax-community/vqgan_f16_16384'
     VQGAN_COMMIT_ID = '90cc46addd2dd8f5be21586a9a23e1b95aa506a9'
-
+    print("hi3")
     # set up VQGAN
     vqgan = VQModel.from_pretrained(VQGAN_REPO, revision=VQGAN_COMMIT_ID)
-
+    print("hi4")
     # decode images
     decoded_images = [vqgan.decode_code(encoded_image) for encoded_image in tqdm(encoded_images)]
     decoded_images[0]
-
+    print("hi5")
     # normalize images
     clipped_images = [img.squeeze().clip(0., 1.) for img in decoded_images]
-
+    print("hi6")
     # convert to image
     images = [Image.fromarray(np.asarray(img * 255, dtype=np.uint8)) for img in clipped_images]
-
+    print("hi7")
     # display an image
     images[0]
 
