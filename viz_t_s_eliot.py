@@ -106,7 +106,9 @@ def getSaveImagesRepresentingTask(prompt,n_predictions,tokenizer,model,clip,proc
     """
     print("hi1")
     from vqgan_jax.modeling_flax_vqgan import VQModel
+    print("hi1.1")
     import numpy as np
+    print("hi1.2")
     from PIL import Image
     print("hi2")
     # make sure we use compatible versions
