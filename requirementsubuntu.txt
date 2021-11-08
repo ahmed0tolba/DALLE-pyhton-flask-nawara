@@ -89,7 +89,7 @@ fix-yahoo-finance==0.0.22
 Flask==1.1.4
 flatbuffers==1.12
 flax==0.3.5 # needs jaxlib which requires linux
-folium==0.8.3
+folium # ==0.8.3
 future==0.16.0
 gast==0.4.0
 # GDAL==2.2.2 # didn't do well on ubuntu
