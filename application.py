@@ -56,7 +56,7 @@ except sqlite3.OperationalError as err:
   print('Database does not exist')
   print(err)
 
-conn.close()
+
 
 def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
   
