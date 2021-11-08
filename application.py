@@ -88,7 +88,10 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
       data_tuple = (searchtext+"_"+str(x),)
       curt.execute(sqlite_insert_query,data_tuple)
       connt.commit()
-
+    connt.close()
+  
+  connt = sqlite3.connect(databasename, uri=True)
+  curt = connt.cursor()
   sql_update_query = """Update searchestextstable set states = 2,finishdate = ? where searchsentense = ?"""
   data_tuple = (datetime.datetime.now(),searchtext)
   curt.execute(sql_update_query,data_tuple)
@@ -137,9 +140,13 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
           data_tuple = (searchsentense+"_"+str(x),)
           curt.execute(sqlite_insert_query,data_tuple)
           connt.commit()
-        
+        connt.close()
+      
+      
       sql_update_query = """Update searchestextstable set states = 2,finishdate = ? where searchsentense = ?"""
       data_tuple = (datetime.datetime.now(),searchsentense)
+      connt = sqlite3.connect(databasename, uri=True)
+      curt = connt.cursor()  
       curt.execute(sql_update_query,data_tuple)
       connt.commit()
       for x in range(int(numofimages)):
