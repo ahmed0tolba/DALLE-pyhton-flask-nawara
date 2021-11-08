@@ -1,3 +1,8 @@
+pip install -q transformers flax
+pip install git+https://github.com/patil-suraj/vqgan-jax.git
+pip install git+https://github.com/borisdayma/dalle-mini.git
+pip install Pillow
+pip install ipywidgets
 absl-py==0.12.0
 alabaster==0.7.12
 albumentations==0.1.12
