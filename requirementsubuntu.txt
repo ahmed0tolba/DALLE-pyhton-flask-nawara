@@ -1,4 +1,3 @@
-transformers flax
 vqgan-jax @ git+https://github.com/patil-suraj/vqgan-jax.git
 pip install Pillow
 pip install ipywidgets
