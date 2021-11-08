@@ -55,7 +55,7 @@ def getSaveImagesRepresentingTask(prompt,n_predictions,tokenizer,model,clip,proc
     # make sure we use compatible versions
     DALLE_REPO = 'flax-community/dalle-mini'
     print("check point-1.2")   
-    DALLE_COMMIT_ID = '4d34126d0df8bc4a692ae933e3b902a1fa8b6114'
+    DALLE_COMMIT_ID = '90cc46addd2dd8f5be21586a9a23e1b95aa506a9' # '4d34126d0df8bc4a692ae933e3b902a1fa8b6114' warning this id changes automatically
     print("check point-1.3")   
     # set up tokenizer and model
     # tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
