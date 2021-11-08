@@ -154,10 +154,12 @@ def vizthread(searchtext,numofimages,tokenizer,model,clip,processor):
         data_tuple = (searchsentense+"_"+str(x),)
         curt.execute(sqlite_insert_query,data_tuple)
         connt.commit()
-
+      connt.close()
       break
 
     # updating while variable    
+    connt = sqlite3.connect(databasename, uri=True)
+    curt = connt.cursor()        
     curt.execute('select * from '+ searchestextstable +' where states = ?', (1,))
     records2 = curt.fetchall()
     numberofrunningtasks = len(records2)
