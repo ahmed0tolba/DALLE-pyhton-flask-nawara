@@ -495,7 +495,7 @@ def downloadFile ():
           zipf.write(os.path.join(root, file))
     memory_file.seek(0)
     return send_file(memory_file,
-                     download_name=fileName,
+                     attachment_filename=fileName,
                      as_attachment=True)
     # path = 'static/_database.db'
     # return send_file(path, as_attachment=True)
