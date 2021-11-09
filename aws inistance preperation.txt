@@ -1,0 +1,56 @@
+sudo apt update
+sudo apt-get install python3
+sudo apt-get install python3-pip
+sudo pip3 install flask
+sudo apt-get install nginx
+sudo apt-get install gunicorn3
+Package gunicorn3 is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+sudo apt-get install git
+git clone https://github.com/ahmed0tolba/nawara
+sudo pip3 install virtualenv 
+virtualenv venv1nawara
+source venv1nawara/bin/activate
+pip install requirementsminubuntu.txt
+pip install -q transformers flax
+pip install git+https://github.com/patil-suraj/vqgan-jax.git
+pip install git+https://github.com/borisdayma/dalle-mini.git
+pip install Pillow
+pip install ipywidgets
+pip install flask
+pip install cmake
+pip install convertdate
+sudo apt-get install libxml2-dev libxslt-dev python-dev
+pip install lxml
+sudo apt-get install -y pkg-config
+sudo apt-get install libsndfile1-dev
+sudo apt-get install libperl-dev
+sudo apt-get install libgtk2.0-dev
+sudo apt-get install libgirepository1.0-dev
+sudo apt-get install python3-cairo
+sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev
+
+Cython>=0.22
+cmdstanpy==0.9.77
+pystan~=2.19.1.1
+numpy>=1.15.4
+pandas>=1.0.4
+matplotlib>=2.0.0
+LunarCalendar>=0.0.9
+convertdate>=2.1.2
+holidays>=0.11.3.1
+setuptools>=42
+setuptools-git>=1.2
+python-dateutil>=2.8.0
+tqdm>=4.36.1
+wheel>=0.37.0
+
+pip install fbprophet
+
+
+pip install requirementsubuntu.txt
+
+
+
+
