@@ -220,6 +220,9 @@ if numberofrunningtasks < numberofrunningtasksmax:
 
 connt.close()  
 
+def url2text(asciitext):
+  return asciitext.replace('%27', "'").replace('%0A', " ").replace('%22', '"').replace('%2E', '.').replace('%20', ' ').replace('%2C', ',').replace('%252C', ',').replace('%3F', '?').replace('%21', '!').replace("\n"," ").replace("  "," ").strip()
+
 
 @application.route('/')
 def index():
@@ -232,8 +235,8 @@ def index():
     # print(request.cookies.get('lastsearch'))
     # print(base64.b64decode(urllib.unquote(request.cookies.get('lastsearch'))))
     # print("hi " + request.cookies.get('lastsearch'))
-    lastsearch = urllib.parse.unquote(format(request.cookies.get('lastsearch'))) #.replace("\n"," ").replace("  "," ").strip()
-    # print("hi " + lastsearch)
+    lastsearch = url2text(request.cookies.get('lastsearch'))
+    print("hi " + lastsearch)
     # print("hi " + (urllib.parse.unquote(format(request.cookies.get('lastsearch')))))
     res = make_response(render_template('index.html')) 
     res.set_cookie('lastsearch',lastsearch) 
@@ -304,7 +307,7 @@ def mylink():
   form_name = request.form['form-name']
   
   if form_name == 'formrequest':
-    textsearsh = format(request.form['textsearsh']).replace("\n"," ").replace("  "," ").strip()
+    textsearsh = url2text(request.cookies.get('lastsearch'))
     res = make_response(render_template('index.html')) 
     res.set_cookie('lastsearch',textsearsh) 
     

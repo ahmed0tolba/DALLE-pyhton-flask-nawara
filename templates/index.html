@@ -203,7 +203,7 @@
         <form action="/" method="post" style="font-size: 1.3em;color: rgb(12, 23, 60);">
             <input type="hidden" name="form-name" value="formrequest"> Enter a phase to turn into images:
             <br>
-            <textarea id="textsearsh" name="textsearsh" style="width: 94%;border: 2px solid #0a1659;padding: 1%;margin: 2%;margin-bottom: 0%;" placeholder="Enter your text with no more than 70 words.."></textarea> <span style="font-size: .7em;float:right">Total word Count : <span id="display_count">0</span>            words.</span>
+            <textarea id="textsearsh" name="textsearsh" style="width: 94%;border: 2px solid #0a1659;padding: 1%;margin: 2%;margin-bottom: 0%;" placeholder="Enter your text with no more than 70 words. Only text, numbers, Semicolons, fullstops and question marks are allowed. Don't use quotation .."></textarea>            <span style="font-size: .7em;float:right">Total word Count : <span id="display_count">0</span> words.</span>
             <br>
             <!-- <br>
         <br>
@@ -283,13 +283,13 @@
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
             while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            if (c.indexOf(name) == 0) return decodeURIComponent(c.substring(name.length, c.length));
         }
         return "";
     }
 
     // function GetCookies() {
-    document.getElementById('textsearsh').value = decodeURI(getCookie('lastsearch'));
+    document.getElementById('textsearsh').value = decodeURIComponent(getCookie('lastsearch'));
     // document.getElementById('numberofimages').value = getCookie('numberofimages');
 
     checkNumImagesBounderies();
@@ -307,8 +307,8 @@
         curimg = [];
         shouldrun = false;
         for (let i = 0; i < numberofimages; i++) {
-            curimg[i] = 'static/' + searchtxt + '_' + i + '.png';
-            // console.log(curimg);
+            curimg[i] = encodeURIComponent('static/' + searchtxt + '_' + i + '.png');
+            console.log((curimg[i]));
             // var divImg[];
 
             fetch(curimg[i], {
