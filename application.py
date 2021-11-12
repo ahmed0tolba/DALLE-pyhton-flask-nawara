@@ -486,7 +486,7 @@ def mylink():
 def allresults():
   conn = sqlite3.connect(databasename, uri=True)
   cur = conn.cursor()
-  cur.execute("SELECT * from searchestextstable")
+  cur.execute("SELECT * from searchestextstable ORDER BY id DESC")
   data = cur.fetchall()
   return render_template('results.html',data=data)
 

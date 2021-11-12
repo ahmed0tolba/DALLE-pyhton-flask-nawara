@@ -6,6 +6,8 @@ body {
 .divmenu {
     background-image: linear-gradient( rgb(12, 23, 60), rgb(90, 121, 162));
     text-align: center;
+    /* position: fixed;
+    top: 0; */
 }
 
 .divImg {
@@ -49,7 +51,7 @@ body {
     color: floralwhite;
     background-color: rgba(0, 0, 0, 0);
     font-size: 1.2em;
-    font-family: fantasy;
+    /* font-family: fantasy; */
     border: none;
     margin-left: 1px;
     padding: .7em;

@@ -7,7 +7,32 @@
     <meta charset=utf-8>
     <link rel="stylesheet" href="../static/_styles.css">
     <link rel="shortcut icon" href="/static/_icon.png" />
+
+    <style>
+        .buttonless {
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.01);
+            padding: .5em;
+        }
+    </style>
+
+    <script>
+        var today = new Date();
+        var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+        function setCookie(lastsearch, value) {
+            document.cookie = lastsearch + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+        }
+
+        function goHomewithNewValue(myid) {
+            console.log(document.getElementById(myid).alt)
+            setCookie("lastsearch", (document.getElementById(myid).alt));
+            window.location.href = "../";
+        }
+    </script>
 </head>
+
+
 
 <body>
     <div class="divmenu">
@@ -20,16 +45,18 @@
         <table style="border: 2px solid #15245e; margin-top:1em ;margin-left:auto;margin-right:auto;border-collapse: collapse;">
             {% for item in data %}
             <tr style="border-bottom: .2em solid black;">
-                <td style="border-right: .1em solid black;">&nbsp;&nbsp;{{item[0]}}&nbsp;&nbsp;</td>
-                <td style="border-right: .1em solid black;">&nbsp;&nbsp;{{item[1]}}&nbsp;&nbsp;</td>
+                <td style="border-right: .1em solid black; padding: 1em;">{{item[0]}}</td>
+                <td style="border-right: .1em solid black; padding: .1em;">
+                    {{item[1]}}</button>
+                </td>
                 {% if item[4]>-1 %}
-                <td style="margin: 0%;padding: 0%;"><img src="../static/{{item[1]}}_{{item[4]}}.png"> </td>
+                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/{{item[1]}}_{{item[4]}}.png"></td>
                 {% endif %} {% if item[4]==-2 %}
-                <td style="margin: 0%;padding: 0%;"><img width=100 src="../static/_bad.png"> </td>
+                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" width=100 src="../static/_bad.png"></td>
                 {% endif %}{% if item[3]==1 and item[4]==-1 %}
-                <td><img src="../static/_processing.gif"> </td>
+                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/_processing.gif"></td>
                 {% endif %} {% if item[3]!=1 and item[4]==-1 %}
-                <td><img src="../static/_notrated.png"> </td>
+                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/_notrated.png"></td>
                 {% endif %}
                 <!-- <td>{{item[3]}}</td>
                 <td>{{item[4]}}</td> -->
