@@ -139,21 +139,31 @@
 
         }
 
+        function decode_flask_cookie(val) {
+            if (val.indexOf('\\') === -1) {
+                return val; // not encoded
+            }
+            // val = val.slice(1, -1).replace(/\\"/g, '"');
+            // val = val.replace(/\\(\d{3})/g, function(match, octal) {
+            //     return String.fromCharCode(parseInt(octal, 8));
+            // });
+            return val.replaceAll("\\054", ',');
+        }
         // displayImagesIfReadyisRunning = false;
 
         function precesstxt()
         //this should set the UserName cookie to the proper value;
         {
             checkNumImagesBounderies();
-            searchtxt = document.getElementById('textsearsh');
-            // console.log(searchtxt)
+            searchtxt = (document.getElementById('textsearsh'));
+
             numberofimages = document.getElementById('numberofimages').value;
 
             if (searchtxt.length < 1 || numberofimages < 1 || numberofimages > 10) {
                 // console.log("invalid input");
                 return;
             }
-
+            // console.log(searchtxt)
             putCookie(searchtxt, numberofimages);
 
             tt = "";
@@ -283,13 +293,14 @@
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
             while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) == 0) return decodeURIComponent(c.substring(name.length, c.length));
+            if (c.indexOf(name) == 0) return (decodeURIComponent(decode_flask_cookie(c.substring(name.length, c.length)))).replace(/['"]+/g, '');
         }
         return "";
     }
 
     // function GetCookies() {
-    document.getElementById('textsearsh').value = decodeURIComponent(getCookie('lastsearch'));
+    document.getElementById('textsearsh').value = decodeURIComponent(decode_flask_cookie(getCookie('lastsearch')).replace(/['"]+/g, ''));
+    // console.log(decode_flask_cookie(getCookie('lastsearch')))
     // document.getElementById('numberofimages').value = getCookie('numberofimages');
 
     checkNumImagesBounderies();

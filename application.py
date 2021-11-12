@@ -18,6 +18,7 @@ import time
 from io import BytesIO
 
 
+
 # Don't forget 16 to 32 and 8 images
 from dalle_mini.model import CustomFlaxBartForConditionalGeneration
 from transformers import BartTokenizer
@@ -27,10 +28,10 @@ DALLE_COMMIT_ID = '4d34126d0df8bc4a692ae933e3b902a1fa8b6114'
 # global model
 # def do_at_startup():
 print('Server is starting up! , Please wait while loading model')  
-tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
-model = CustomFlaxBartForConditionalGeneration.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
-clip = FlaxCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+# tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
+# model = CustomFlaxBartForConditionalGeneration.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
+# clip = FlaxCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+# processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 print("Model loaded")
 # ftfy # spacy
@@ -221,7 +222,7 @@ if numberofrunningtasks < numberofrunningtasksmax:
 connt.close()  
 
 def url2text(asciitext):
-  return asciitext.replace('%27', "'").replace('%0A', " ").replace('%22', '"').replace('%2E', '.').replace('%20', ' ').replace('%2C', ',').replace('%252C', ',').replace('%3F', '?').replace('%21', '!').replace("\n"," ").replace("  "," ").strip()
+  return asciitext.replace('%27', "'").replace('%0A', " ").replace('%22', '"').replace('%2E', '.').replace('%20', ' ').replace('%2C', ',').replace('%252C', ',').replace('\\054', ',').replace('%3F', '?').replace('%21', '!').replace("\n"," ").replace("  "," ").strip()
 
 
 @application.route('/')
@@ -230,7 +231,8 @@ def index():
   message = "Write the text in the text input area. Click Generate Images. Wait for images to show up. Please rate each image."
   hiddenmessage = -1
   
-  
+  lastsearch=""
+
   try:
     # print(request.cookies.get('lastsearch'))
     # print(base64.b64decode(urllib.unquote(request.cookies.get('lastsearch'))))
@@ -296,6 +298,7 @@ def index():
           goodImage = -2
           # print("goodImage = " + str(goodImage))
 
+
   return render_template('index.html',message=message,hiddenmessage=hiddenmessage,goodImage=goodImage)
 
 @application.route('/',methods=['POST'])
@@ -307,9 +310,8 @@ def mylink():
   form_name = request.form['form-name']
   
   if form_name == 'formrequest':
-    textsearsh = url2text(request.cookies.get('lastsearch'))
-    res = make_response(render_template('index.html')) 
-    res.set_cookie('lastsearch',textsearsh) 
+    textsearsh = url2text(request.form['textsearsh'])
+    
     
     print ('You entered: ' , textsearsh)
     numofimages = format(request.form['numberofimages'])
@@ -418,6 +420,10 @@ def mylink():
         message = "Results were previously stored. Contact Admin for modifications"
         alreadystored = 1
         goodImage = resultsevaluation
+    res = make_response(render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored)) 
+    print( textsearsh)
+    res.set_cookie('lastsearch',textsearsh) 
+    return res
 
   if form_name == 'formfeedback':
     x = request.form['selectedimageNum']
