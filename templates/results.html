@@ -25,8 +25,9 @@
         }
 
         function goHomewithNewValue(myid) {
-            console.log(document.getElementById(myid).alt)
-            setCookie("lastsearch", (document.getElementById(myid).alt));
+            console.log(document.getElementById(myid).alt);
+            let str = document.getElementById(myid).alt;
+            setCookie("lastsearch", str.slice(0, -2));
             window.location.href = "../";
         }
     </script>
@@ -49,14 +50,19 @@
                 <td style="border-right: .1em solid black; padding: .1em;">
                     {{item[1]}}</button>
                 </td>
+                <!-- <script>
+                    document.write('< td style = "margin: 0%;padding: 0%;" > < img id = "element_{{item[0]}}" class = "buttonless" onclick = "goHomewithNewValue(this.id)" alt = "{{item[1]}}" src = ');
+                    document.write(escape('"../static/{{item[1]}}_{{item[4]}}.png"'));
+                    document.write('></td>');
+                </script> -->
                 {% if item[4]>-1 %}
-                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/{{item[1]}}_{{item[4]}}.png"></td>
+                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless imageBest" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}_{{item[4]}}" src='../static/{{item[1]}}_{{item[4]}}.png'></td>
                 {% endif %} {% if item[4]==-2 %}
-                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" width=100 src="../static/_bad.png"></td>
+                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}_{{item[4]}}" width=100 src="../static/_bad.png"></td>
                 {% endif %}{% if item[3]==1 and item[4]==-1 %}
-                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/_processing.gif"></td>
+                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}__" src="../static/_processing.gif"></td>
                 {% endif %} {% if item[3]!=1 and item[4]==-1 %}
-                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}" src="../static/_notrated.png"></td>
+                <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}__" src="../static/_notrated.png"></td>
                 {% endif %}
                 <!-- <td>{{item[3]}}</td>
                 <td>{{item[4]}}</td> -->
@@ -64,6 +70,16 @@
             {% endfor %}
         </table>
     </div>
+
+    <script>
+        var images = document.getElementsByClassName("imageBest");
+        console.log(images.length);
+        for (var i = 0; i < images.length; i++) {
+            images[i].src = "../static/" + escape(images[i].alt) + ".png";
+        }
+    </script>
 </body>
+
+
 
 </html>
