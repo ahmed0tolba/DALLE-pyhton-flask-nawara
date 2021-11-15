@@ -328,7 +328,31 @@ def mylink():
   goodImage = -1
   hiddenmessage = -1
   alreadystored = 0
+  serverStates = -2 # -2 Idel , -1 -> 1 running process with no queue ,  0 -> xx number of queed process + the one in queue
+  conn = sqlite3.connect(databasename, uri=True)
+  cur = conn.cursor()
+  sqlite_insert_query = """select * from searchestextstable
+                          where states = ?;"""
+  data_tuple = (1,)
+  cur.execute(sqlite_insert_query,data_tuple)
+  rows = cur.fetchall()
+  numberofrunningtasks = len(rows)
+  
+  sqlite_insert_query = """select * from searchestextstable
+                          where states = ?;"""
+  data_tuple = (0,)
+  cur.execute(sqlite_insert_query,data_tuple)
+  rows = cur.fetchall()
+  numberofqueuedtasks = len(rows)
+  
+  if numberofrunningtasks>0 :
+    serverStates = -1
+  if numberofqueuedtasks>0 :
+    serverStates = numberofqueuedtasks
+  conn.close()
+
   form_name = request.form['form-name']
+  
   
   if form_name == 'formrequest':
     textsearsh = url2text(request.form['textsearsh'])
@@ -338,7 +362,7 @@ def mylink():
     numofimages = format(request.form['numberofimages'])
     # print(format(request.form['textsearsh'])) 
     if ( len(textsearsh.strip())<2 ):
-      return render_template('index.html', message="Invalid input",hiddenmessage=-1)# redirect(url_for('mylink'))  
+      return render_template('index.html', message="Invalid input",hiddenmessage=-1,serverStates=serverStates)# redirect(url_for('mylink'))  
     
     
     # if not in database , add to database 
@@ -441,7 +465,7 @@ def mylink():
         message = "Results were previously stored. Contact Admin for modifications"
         alreadystored = 1
         goodImage = resultsevaluation
-    res = make_response(render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored)) 
+    res = make_response(render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored,serverStates=serverStates)) 
     # print( textsearsh)
     res.set_cookie('lastsearch',textsearsh) 
     return res
@@ -501,7 +525,7 @@ def mylink():
   # print (message,2)
   result=1
   # result=textsearsh+"_1.png"
-  return render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored)# redirect(url_for('mylink'))#render_template('index.html')#, result=textsearsh+"_1.png")#
+  return render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored,serverStates=serverStates)# redirect(url_for('mylink'))#render_template('index.html')#, result=textsearsh+"_1.png")#
 
 @application.route('/results/')
 def allresults():
