@@ -28,10 +28,10 @@ DALLE_COMMIT_ID = '4d34126d0df8bc4a692ae933e3b902a1fa8b6114'
 # global model
 # def do_at_startup():
 print('Server is starting up! , Please wait while loading model')  
-tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
-model = CustomFlaxBartForConditionalGeneration.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
-clip = FlaxCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+# tokenizer = BartTokenizer.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
+# model = CustomFlaxBartForConditionalGeneration.from_pretrained(DALLE_REPO, revision=DALLE_COMMIT_ID)
+# clip = FlaxCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+# processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 print("Model loaded")
 # ftfy # spacy
@@ -245,6 +245,7 @@ def index():
   except:
     lastsearch=""
   # print(lastsearch)
+  
   conn = sqlite3.connect(databasename, uri=True)
   cur = conn.cursor()
   sqlite_insert_query = """select * from searchestextstable
@@ -456,6 +457,26 @@ def mylink():
         
     cur.execute(sqlite_insert_query,data_tuple)
     rows = cur.fetchall()
+
+    sqlite_insert_query = """select * from searchestextstable
+                            where states = ?;"""
+    data_tuple = (1,)
+    cur.execute(sqlite_insert_query,data_tuple)
+    rows = cur.fetchall()
+    numberofrunningtasks = len(rows)
+    
+    sqlite_insert_query = """select * from searchestextstable
+                            where states = ?;"""
+    data_tuple = (0,)
+    cur.execute(sqlite_insert_query,data_tuple)
+    rows = cur.fetchall()
+    numberofqueuedtasks = len(rows)
+    
+    if numberofrunningtasks>0 :
+      serverStates = -1
+    if numberofqueuedtasks>0 :
+      serverStates = numberofqueuedtasks
+    
     conn.close()
     for row in rows:
       resultsevaluation = row[4]
