@@ -192,6 +192,7 @@
     <div class="divmenu">
         <button class="menubutton" onclick="location.href=''">Home</button>
         <button class="menubutton" onclick="location.href='results'">Results</button>
+
     </div>
 
     <div style="padding-left:5%;padding-right:5%;">
@@ -209,6 +210,7 @@
             <!-- <br> -->
 
             <input type="submit" id="submit" class="buttonsubmit raise" value="Generate Image(s)" style="min-width: 200px;min-height: 50px;font-size: .8em;font-weight: bold;border: 2px solid #0a1659;" onclick="precesstxt();" />
+            <button id="menuserverstates"></button>
             <br><br> AI response:
             <br>
             <div id="message" name="message" class="messagediv">
@@ -362,6 +364,20 @@
             // am_cal(finalCount);
         }).keyup();
     });
+
+
+    if ('{{serverStates}}' == -2) {
+        document.getElementById("menuserverstates").innerText = 'Server is Free & Ready';
+        document.getElementById("menuserverstates").style.color = "#02dba5";
+    }
+    if ('{{serverStates}}' == -1) {
+        document.getElementById("menuserverstates").innerText = '1 running process , No processes in queue , Your text will be queued.';
+        document.getElementById("menuserverstates").style.color = "#f5e900";
+    }
+    if ('{{serverStates}}' > 0) {
+        document.getElementById("menuserverstates").innerText = '1 running process , ' + '{{serverStates}}' + ' processes in queue, Your text will be added to queue.';
+        document.getElementById("menuserverstates").style.color = "#ff954a";
+    }
 </script>
 
 </html>

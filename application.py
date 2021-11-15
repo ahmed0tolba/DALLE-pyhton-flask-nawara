@@ -230,7 +230,7 @@ def index():
   goodImage = -1 # no previous image is marked as good
   message = "Write the text in the text input area. Click Generate Images. Wait for images to show up. Please rate each image."
   hiddenmessage = -1
-  
+  serverStates = -2 # -2 Idel , -1 -> 1 running process with no queue ,  0 -> xx number of queed process + the one in queue
   lastsearch=""
 
   try:
@@ -238,7 +238,7 @@ def index():
     # print(base64.b64decode(urllib.unquote(request.cookies.get('lastsearch'))))
     # print("hi " + request.cookies.get('lastsearch'))
     lastsearch = url2text(request.cookies.get('lastsearch'))
-    print("hi " + lastsearch)
+    # print("hi " + lastsearch)
     # print("hi " + (urllib.parse.unquote(format(request.cookies.get('lastsearch')))))
     res = make_response(render_template('index.html')) 
     res.set_cookie('lastsearch',lastsearch) 
@@ -247,8 +247,29 @@ def index():
   # print(lastsearch)
   conn = sqlite3.connect(databasename, uri=True)
   cur = conn.cursor()
+  sqlite_insert_query = """select * from searchestextstable
+                          where states = ?;"""
+  data_tuple = (1,)
+  cur.execute(sqlite_insert_query,data_tuple)
+  rows = cur.fetchall()
+  numberofrunningtasks = len(rows)
+  
+  sqlite_insert_query = """select * from searchestextstable
+                          where states = ?;"""
+  data_tuple = (0,)
+  cur.execute(sqlite_insert_query,data_tuple)
+  rows = cur.fetchall()
+  numberofqueuedtasks = len(rows)
+  
+  if numberofrunningtasks>0 :
+    serverStates = -1
+  if numberofqueuedtasks>0 :
+    serverStates = numberofqueuedtasks
+    
+
   if ( len(lastsearch)<2 ):
-    return render_template('index.html', message="Invalid input",hiddenmessage=-1,goodImage=goodImage)# redirect(url_for('mylink')) 
+    conn.close()
+    return render_template('index.html', message="Invalid input",hiddenmessage=-1,goodImage=goodImage,serverStates=serverStates)# redirect(url_for('mylink')) 
   if lastsearch=="":
     message = "Write the text in the text input area. Click Generate Images. Wait for images to show up. Please rate each image."
     
@@ -265,7 +286,7 @@ def index():
       numofimages = row[2]
       status = row[3]
       resultsevaluation = row[4]
-      print ("current Status = " + str(status))
+      # print ("current Status = " + str(status))
       if status == 0:
         message = "Your previous text is still in queue, you can add a new text or wait.."
         hiddenmessage = 0    
@@ -273,7 +294,7 @@ def index():
         message = "Your previous text is being processed, you can add a new text or wait.."
         hiddenmessage = 1    
       elif status == 2:
-        print ("resultsevaluation = " + str(resultsevaluation))
+        # print ("resultsevaluation = " + str(resultsevaluation))
         if resultsevaluation == -1:
           message = "Your previous text completed succesfully, Please Select the best fit for the text."
           hiddenmessage = 2
@@ -299,7 +320,7 @@ def index():
           # print("goodImage = " + str(goodImage))
 
 
-  return render_template('index.html',message=message,hiddenmessage=hiddenmessage,goodImage=goodImage)
+  return render_template('index.html',message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,serverStates=serverStates)
 
 @application.route('/',methods=['POST'])
 def mylink():
@@ -399,7 +420,7 @@ def mylink():
         t = Thread(target=vizthread,args=[textsearsh,numofimages,tokenizer,model,clip,processor])
         t.start()
       else:
-        message = "Server is busy - maximum processes are runing - ", "'",textsearsh,"'"," job will be qued , Number of running tasks running = " + str(numberofrunningtasks) + " , results will be updated automatically , you can close the page and come back later"
+        message = "Server is busy - maximum processes are runing - " + "'" + textsearsh + "'" + " job will be qued , Number of running tasks running = " + str(numberofrunningtasks) + " , results will be updated automatically , you can close the page and come back later"
         print(message)
 
     sqlite_insert_query = """select * from searchestextstable
@@ -421,7 +442,7 @@ def mylink():
         alreadystored = 1
         goodImage = resultsevaluation
     res = make_response(render_template('index.html', message=message,hiddenmessage=hiddenmessage,goodImage=goodImage,alreadystored=alreadystored)) 
-    print( textsearsh)
+    # print( textsearsh)
     res.set_cookie('lastsearch',textsearsh) 
     return res
 
@@ -446,8 +467,8 @@ def mylink():
           statesnum = -2 
         else: 
           statesnum = int(x)
-        print(x,nam)
-        print("statesnum = " + str (statesnum))
+        # print(x,nam)
+        # print("statesnum = " + str (statesnum))
         data_tuple = (statesnum,nam)
         conn = sqlite3.connect(databasename, uri=True)
         cur = conn.cursor()

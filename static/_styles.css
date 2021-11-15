@@ -64,6 +64,16 @@ body {
     background-color: rgba(70, 70, 90, 1);
 }
 
+#menuserverstates {
+    background-color: rgba(0, 0, 0, 0);
+    font-size: .7em;
+    border: none;
+    margin-left: 1px;
+    margin-top: 5px;
+    padding: .7em;
+    /* float: right; */
+}
+
 .buttonsubmit {
     transition: .2s;
 }
