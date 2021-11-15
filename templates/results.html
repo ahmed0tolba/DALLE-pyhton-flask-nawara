@@ -58,7 +58,7 @@
                 {% if item[4]>-1 %}
                 <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless imageBest" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}_{{item[4]}}" src='../static/{{item[1]}}_{{item[4]}}.png'></td>
                 {% endif %} {% if item[4]==-2 %}
-                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}_{{item[4]}}" width=100 src="../static/_bad.png"></td>
+                <td style="margin: 0%;padding: 0%;"><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}__" width=100 src="../static/_bad.png"></td>
                 {% endif %}{% if item[3]==1 and item[4]==-1 %}
                 <td><img id="element_{{item[0]}}" class="buttonless" onclick="goHomewithNewValue(this.id)" alt="{{item[1]}}__" src="../static/_processing.gif"></td>
                 {% endif %} {% if item[3]!=1 and item[4]==-1 %}
