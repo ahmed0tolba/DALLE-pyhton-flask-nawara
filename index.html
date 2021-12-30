@@ -96,7 +96,7 @@
     </div>
     <div id="enemyContainer1"></div>
     <div id="explosionContainer"></div>
-    <div id="Lives" style="position: absolute;width:6em;height: 1em; bottom: 10px;font-size: 4em;color: wheat;"><span
+    <div id="Lives" style="position: absolute;width:6em;height: 1em; bottom: 10px;font-size: 4em;color: wheat;"><span id="Lives2"
             style="vertical-align: top;position:relative; bottom:.2ex;">&nbsp;3 </span><img src="lifes.png"
             height="100%"></div>
     <div id="Health"
@@ -117,10 +117,13 @@
         let clickX = 0;
         let clickY = 0;
         function showCoordinates(event) {
+            playerMovingClick = true;
             touching = true;
             clickX = event.touches[0].clientX;
             clickY = event.touches[0].clientY;
             fire1();
+            var coords = "X coords: " + clickX + ", Y coords: " + clickY;
+            document.getElementById("Lives2").innerHTML = coords;
         }
         var playerShip = document.getElementById("playerShip");
         var refwidth = 0;
