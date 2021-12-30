@@ -117,6 +117,7 @@
         let clickX = 0;
         let clickY = 0;
         function showCoordinates(event) {
+            touching = true;
             clickX = event.touches[0].clientX;
             clickY = event.touches[0].clientY;
             fire1();
