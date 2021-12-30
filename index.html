@@ -113,9 +113,13 @@
 
 
     <script>
+        let playerMovingClick = false;
+        let clickX = 0;
+        let clickY = 0;
         function showCoordinates(event) {
             clickX = event.touches[0].clientX;
             clickY = event.touches[0].clientY;
+            fire1();
         }
         var playerShip = document.getElementById("playerShip");
         var refwidth = 0;
@@ -449,9 +453,7 @@
             }
         }
 
-        let playerMovingClick = false;
-        let clickX = 0;
-        let clickY = 0;
+
 
         function movePlayerToPoint() {
 
@@ -476,8 +478,8 @@
             }
             else {
                 //IE
-                clickX = window.event.screenX+ playerwidth / 2;
-                clickY = window.event.screenY- playerheight / 2;
+                clickX = window.event.screenX + playerwidth / 2;
+                clickY = window.event.screenY - playerheight / 2;
             }
             // clickX = event.clientX + playerwidth / 2;
             // clickY = event.clientY - playerheight / 2;
